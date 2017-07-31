@@ -12,8 +12,8 @@ import UIKit
 
 protocol Scribblable
 {
-    func beginScribble(point: CGPoint)
-    func appendScribble(point: CGPoint)
+    func beginScribble(_ point: CGPoint)
+    func appendScribble(_ point: CGPoint)
     func endScribble()
     func clearScribble()
 }
@@ -29,13 +29,13 @@ class ScribbleView: UIView
     
     required init(title: String)
     {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         
-        backgroundLayer.strokeColor = UIColor.darkGrayColor().CGColor
+        backgroundLayer.strokeColor = UIColor.darkGray.cgColor
         backgroundLayer.fillColor = nil
         backgroundLayer.lineWidth = 2
         
-        drawingLayer.strokeColor = UIColor.blackColor().CGColor
+        drawingLayer.strokeColor = UIColor.black.cgColor
         drawingLayer.fillColor = nil
         drawingLayer.lineWidth = 2
         
@@ -43,11 +43,11 @@ class ScribbleView: UIView
         layer.addSublayer(drawingLayer)
         
         titleLabel.text = title
-        titleLabel.textAlignment = NSTextAlignment.Center
-        titleLabel.textColor = UIColor.blueColor()
+        titleLabel.textAlignment = NSTextAlignment.center
+        titleLabel.textColor = UIColor.blue
         addSubview(titleLabel)
         
-        layer.borderColor = UIColor.blueColor().CGColor
+        layer.borderColor = UIColor.blue.cgColor
         layer.borderWidth = 1
         
         layer.masksToBounds = true
@@ -61,9 +61,9 @@ class ScribbleView: UIView
     override func layoutSubviews()
     {
         titleLabel.frame = CGRect(x: 0,
-            y: frame.height - titleLabel.intrinsicContentSize().height - 2,
+            y: frame.height - titleLabel.intrinsicContentSize.height - 2,
             width: frame.width,
-            height: titleLabel.intrinsicContentSize().height)
+            height: titleLabel.intrinsicContentSize.height)
     }
 }
 
@@ -73,32 +73,32 @@ class SimpleScribbleView: ScribbleView, Scribblable
 {
     let simplePath = UIBezierPath()
     
-    func beginScribble(point: CGPoint)
+    func beginScribble(_ point: CGPoint)
     {
         simplePath.removeAllPoints()
         
-        simplePath.moveToPoint(point)
+        simplePath.move(to: point)
     }
     
-    func appendScribble(point: CGPoint)
+    func appendScribble(_ point: CGPoint)
     {
-        simplePath.addLineToPoint(point)
+        simplePath.addLine(to: point)
         
-        drawingLayer.path = simplePath.CGPath
+        drawingLayer.path = simplePath.cgPath
     }
     
     func endScribble()
     {
         if let backgroundPath = backgroundLayer.path
         {
-            simplePath.appendPath(UIBezierPath(CGPath: backgroundPath))
+            simplePath.append(UIBezierPath(cgPath: backgroundPath))
         }
         
-        backgroundLayer.path = simplePath.CGPath
+        backgroundLayer.path = simplePath.cgPath
         
         simplePath.removeAllPoints()
         
-        drawingLayer.path = simplePath.CGPath
+        drawingLayer.path = simplePath.cgPath
     }
     
     func clearScribble()
@@ -114,33 +114,33 @@ class HermiteScribbleView: ScribbleView, Scribblable
     let hermitePath = UIBezierPath()
     var interpolationPoints = [CGPoint]()
     
-    func beginScribble(point: CGPoint)
+    func beginScribble(_ point: CGPoint)
     {
         interpolationPoints = [point]
     }
 
-    func appendScribble(point: CGPoint)
+    func appendScribble(_ point: CGPoint)
     {
         interpolationPoints.append(point)
         
         hermitePath.removeAllPoints()
         hermitePath.interpolatePointsWithHermite(interpolationPoints)
         
-        drawingLayer.path = hermitePath.CGPath
+        drawingLayer.path = hermitePath.cgPath
     }
     
     func endScribble()
     {
         if let backgroundPath = backgroundLayer.path
         {
-            hermitePath.appendPath(UIBezierPath(CGPath: backgroundPath))
+            hermitePath.append(UIBezierPath(cgPath: backgroundPath))
         }
         
-        backgroundLayer.path = hermitePath.CGPath
+        backgroundLayer.path = hermitePath.cgPath
         
         hermitePath.removeAllPoints()
         
-        drawingLayer.path = hermitePath.CGPath
+        drawingLayer.path = hermitePath.cgPath
     }
     
     func clearScribble()
